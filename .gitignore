@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+
+# Credentials and tokens
+credentials.json
+token.json
+client_secret*.json
+
+# Database
+*.db
+app_data.db
+
+# Logs
+*.log
+
+# Flask
+instance/
+.webassets-cache
+
+# Misc
+dist/
+build/
+*.egg-info/

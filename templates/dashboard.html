@@ -1,0 +1,433 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Dashboard - Target.Acquired{% endblock %}
+
+{% block content %}
+{# ===== STAT CARDS ROW ===== #}
+<div class="row g-4 mb-5 fade-in-up" style="animation-delay: 0.1s;">
+    <!-- Total Deployed -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Total Deployed</p>
+                        <h2 class="stat-value text-primary-gradient mb-0">{{ stats.total_applications }}</h2>
+                    </div>
+                    <div class="stat-icon bg-primary-soft text-primary">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Signals Returned -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Signals Returned</p>
+                        <h2 class="stat-value text-success-gradient mb-0">{{ stats.replied }}</h2>
+                    </div>
+                    <div class="stat-icon bg-success-soft text-success">
+                        <i class="fa-solid fa-handshake"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Awaiting Intel -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Awaiting Intel</p>
+                        <h2 class="stat-value text-warning-gradient mb-0">{{ stats.pending }}</h2>
+                    </div>
+                    <div class="stat-icon bg-warning-soft text-warning">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Total Comms -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Total Comms</p>
+                        <h2 class="stat-value text-info-gradient mb-0">{{ stats.total_replies }}</h2>
+                    </div>
+                    <div class="stat-icon bg-info-soft text-info">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Rejected -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card stat-card-rejected">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Rejected</p>
+                        <h2 class="stat-value text-danger-gradient mb-0">{{ stats.rejected }}</h2>
+                    </div>
+                    <div class="stat-icon bg-danger-soft text-danger">
+                        <i class="fa-solid fa-ban"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Interview -->
+    <div class="col-xl-2 col-md-4 col-sm-6">
+        <div class="card stat-card glass-card stat-card-interview">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="stat-title text-muted-custom mb-1">Interviews</p>
+                        <h2 class="stat-value text-teal-gradient mb-0">{{ stats.interview }}</h2>
+                    </div>
+                    <div class="stat-icon bg-teal-soft text-teal">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ===== MAIN ACTIVE TARGETS TABLE ===== #}
+<div class="row mb-5 fade-in-up" style="animation-delay: 0.2s;">
+    <div class="col-12">
+        <div class="card glass-card main-table-card border-0">
+            <div class="card-header border-0 bg-transparent pt-4 pb-2 px-4 d-flex justify-content-between align-items-center">
+                <h4 class="mb-0 fw-bold header-title">Active Targets</h4>
+                <div class="badge-custom bg-secondary-soft text-light border border-secondary">
+                    <i class="fa-solid fa-list me-1"></i> {{ jobs|length }} Entries
+                </div>
+            </div>
+            <div class="card-body px-0 pb-0">
+                <div class="table-responsive px-4 pb-4">
+                    <table class="table table-hover custom-table align-middle" id="jobsTable">
+                        <thead>
+                            <tr>
+                                <th class="ps-3 border-0 rounded-start">Target Company</th>
+                                <th class="border-0">Role</th>
+                                <th class="border-0">Date Engaged</th>
+                                <th class="border-0">Status</th>
+                                <th class="border-0">Comms Check</th>
+                                <th class="border-0">Time Elapsed</th>
+                                <th class="pe-3 border-0 rounded-end text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs %}
+                            <tr class="table-row-custom">
+                                <td class="ps-3 fw-bold text-light company-name">
+                                    <div class="d-flex align-items-center">
+                                        <div class="company-avatar me-3 bg-secondary-soft text-light">
+                                            {{ job.company[:1]|upper if job.company else '?' }}
+                                        </div>
+                                        {{ job.company }}
+                                    </div>
+                                </td>
+                                <td class="text-muted-light">{{ job.position }}</td>
+                                <td class="text-muted-light"><i class="fa-regular fa-calendar-days text-muted me-2"></i>{{ job.applied_date }}</td>
+                                <td>
+                                    {% if job.status == 'offer' %}
+                                    <span class="badge-status status-success"><i class="fa-solid fa-star me-1"></i>Offer</span>
+                                    {% elif job.status == 'rejected' %}
+                                    <span class="badge-status status-danger"><i class="fa-solid fa-xmark me-1"></i>Rejected</span>
+                                    {% elif job.status == 'interview' %}
+                                    <span class="badge-status status-warning"><i class="fa-solid fa-comments me-1"></i>Interview</span>
+                                    {% else %}
+                                    <span class="badge-status status-secondary"><i class="fa-solid fa-bullseye me-1"></i>Applied</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if job.has_reply %}
+                                        <span class="reply-status text-success fw-semibold"><i class="fa-solid fa-check-circle me-1"></i>Signal Received</span>
+                                    {% else %}
+                                        <span class="reply-status text-warning-light"><i class="fa-regular fa-clock me-1"></i>Awaiting</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if job.applied_date %}
+                                        <span id="days-{{ loop.index }}" class="days-badge">Calc...</span>
+                                    {% endif %}
+                                </td>
+                                <td class="pe-3 text-end">
+                                    <button class="btn btn-sm btn-icon btn-glass" data-bs-toggle="modal" data-bs-target="#jobModal{{ loop.index }}" title="View Intel">
+                                        <i class="fa-solid fa-fingerprint"></i>
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <!-- Job Detail Modal -->
+                            <div class="modal fade glass-modal" id="jobModal{{ loop.index }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    <div class="modal-content glass-card border-0">
+                                        <div class="modal-header border-bottom border-light-subtle px-4 py-3">
+                                            <h5 class="modal-title fw-bold font-outfit d-flex align-items-center gap-3">
+                                                <div class="company-avatar bg-primary-soft text-primary">{{ job.company[:1]|upper if job.company else '?' }}</div>
+                                                {{ job.company }} <span class="text-muted opacity-50 fw-normal fs-6">|</span> <span class="text-primary-gradient">{{ job.position }}</span>
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <div class="row g-4">
+                                                <div class="col-md-6">
+                                                    <div class="detail-box p-3 h-100">
+                                                        <h6 class="text-uppercase tracking-wider text-muted-custom fs-7 mb-3"><i class="fa-solid fa-clipboard-list me-2"></i>Mission Details</h6>
+                                                        <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                                                            <li class="d-flex flex-column"><span class="text-muted fs-7">Date Engaged</span> <span class="fw-medium text-light">{{ job.applied_date }}</span></li>
+                                                            <li class="d-flex flex-column"><span class="text-muted fs-7">Current Status</span> <span class="fw-medium text-light text-capitalize">{{ job.status }}</span></li>
+                                                            <li class="d-flex flex-column"><span class="text-muted fs-7">Point of Contact</span> <span class="fw-medium text-info">{{ job.contact_email or 'Classified / N/A' }}</span></li>
+                                                            {% if job.url %}
+                                                            <li class="d-flex flex-column"><span class="text-muted fs-7">Target Intel</span> <a href="{{ job.url }}" target="_blank" class="text-primary hover-glow">View Listing <i class="fa-solid fa-arrow-up-right-from-square ms-1 fs-7"></i></a></li>
+                                                            {% endif %}
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="detail-box p-3 h-100">
+                                                        <h6 class="text-uppercase tracking-wider text-muted-custom fs-7 mb-3"><i class="fa-solid fa-note-sticky me-2"></i>Field Notes</h6>
+                                                        {% if job.notes %}
+                                                        <p class="text-light-50">{{ job.notes }}</p>
+                                                        {% else %}
+                                                        <p class="text-muted fst-italic">No additional intel recorded.</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+
+                                                {% if job.has_reply %}
+                                                <div class="col-12 mt-4 fade-in-up">
+                                                    <div class="reply-box p-4 border border-success border-opacity-25 rounded-3 position-relative overflow-hidden">
+                                                        <div class="position-absolute top-0 end-0 p-3 opacity-10">
+                                                            <i class="fa-solid fa-quote-right fa-4x text-success"></i>
+                                                        </div>
+                                                        <h6 class="text-success text-uppercase tracking-wider fs-7 mb-4 d-flex align-items-center">
+                                                            <span class="pulse-dot bg-success me-2"></span> Signal Intercepted
+                                                        </h6>
+                                                        <div class="d-flex flex-column gap-3 position-relative z-1">
+                                                            <div class="d-flex justify-content-between align-items-center border-bottom border-light-subtle pb-2">
+                                                                <div>
+                                                                    <span class="text-muted fs-7 d-block">Sender Code</span>
+                                                                    <span class="fw-bold text-light">{{ job.reply_email.from }}</span>
+                                                                </div>
+                                                                <div class="text-end">
+                                                                    <span class="text-muted fs-7 d-block">Timestamp</span>
+                                                                    <span class="text-light">{{ job.reply_email.date }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <span class="text-muted fs-7 d-block mb-1">Subject Header</span>
+                                                                <span class="fw-medium text-warning">{{ job.reply_email.subject }}</span>
+                                                            </div>
+                                                            <div class="mt-2 p-3 bg-dark bg-opacity-50 rounded text-light-50 font-monospace fs-7 border border-light-subtle">
+                                                                {{ job.reply_email.body }}...
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if not jobs %}
+                <div class="alert glass-alert border-info border-opacity-25 m-4 d-flex align-items-center">
+                    <i class="fa-solid fa-radar fa-spin fa-2x text-info me-3"></i>
+                    <div>
+                        <strong class="d-block text-light mb-1">Sensors are clear.</strong>
+                        <span class="text-muted-custom">No targets detected in your job folder.</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{# ===== LABEL MONITORING SECTIONS ===== #}
+{% if label_data %}
+<div class="row g-4 fade-in-up" style="animation-delay: 0.3s;">
+
+    {# ---- Macro: renders a label panel (Rejected or Interview) ---- #}
+    {% macro label_panel(key, icon, color, panel_id) %}
+    {% set section = label_data.get(key, {'count': 0, 'jobs': []}) %}
+    <div class="col-12">
+        <div class="card glass-card main-table-card border-0 label-section label-section-{{ key|lower }}">
+            <div class="card-header border-0 bg-transparent pt-4 pb-2 px-4 d-flex justify-content-between align-items-center"
+                 role="button"
+                 data-bs-toggle="collapse"
+                 data-bs-target="#{{ panel_id }}"
+                 aria-expanded="{{ 'true' if section.count > 0 else 'false' }}">
+                <h4 class="mb-0 fw-bold header-title d-flex align-items-center gap-3">
+                    <span class="label-dot bg-{{ color }}"></span>
+                    <i class="fa-solid fa-{{ icon }} text-{{ color }} me-1"></i> {{ key }}
+                    <span class="label-count-badge bg-{{ color }}-soft text-{{ color }} border border-{{ color }} border-opacity-30">
+                        {{ section.count }} application{{ 's' if section.count != 1 else '' }}
+                    </span>
+                </h4>
+                <i class="fa-solid fa-chevron-down collapse-chevron text-muted"></i>
+            </div>
+
+            <div class="collapse {{ 'show' if section.count > 0 else '' }}" id="{{ panel_id }}">
+                <div class="card-body px-0 pb-0">
+                    {% if section.jobs %}
+                    <div class="table-responsive px-4 pb-4">
+                        <table class="table table-hover custom-table align-middle">
+                            <thead>
+                                <tr>
+                                    <th class="ps-3 border-0 rounded-start">Company</th>
+                                    <th class="border-0">Position</th>
+                                    <th class="border-0">File Date</th>
+                                    <th class="border-0">Comms</th>
+                                    <th class="pe-3 border-0 rounded-end text-end">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in section.jobs %}
+                                <tr class="table-row-custom">
+                                    <td class="ps-3 fw-bold text-light">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="company-avatar bg-{{ color }}-soft text-{{ color }}">
+                                                {{ job.company[:1]|upper if job.company else '?' }}
+                                            </div>
+                                            {{ job.company }}
+                                        </div>
+                                    </td>
+                                    <td class="text-muted-light">{{ job.position }}</td>
+                                    <td class="text-muted-light">
+                                        <i class="fa-regular fa-calendar-days text-muted me-2"></i>{{ job.applied_date }}
+                                    </td>
+                                    <td>
+                                        {% if job.has_reply %}
+                                        <span class="reply-status text-success fw-semibold">
+                                            <i class="fa-solid fa-check-circle me-1"></i>Signal Received
+                                        </span>
+                                        {% else %}
+                                        <span class="reply-status text-muted">
+                                            <i class="fa-regular fa-clock me-1"></i>No Reply
+                                        </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="pe-3 text-end">
+                                        <button class="btn btn-sm btn-icon btn-glass"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#{{ panel_id }}Modal{{ loop.index }}"
+                                                title="View Details">
+                                            <i class="fa-solid fa-fingerprint text-{{ color }}"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                {# Detail modal #}
+                                <div class="modal fade" id="{{ panel_id }}Modal{{ loop.index }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                        <div class="modal-content glass-card border-0">
+                                            <div class="modal-header border-bottom border-{{ color }} border-opacity-25 px-4 py-3">
+                                                <h5 class="modal-title fw-bold font-outfit d-flex align-items-center gap-3">
+                                                    <div class="company-avatar bg-{{ color }}-soft text-{{ color }}">
+                                                        {{ job.company[:1]|upper if job.company else '?' }}
+                                                    </div>
+                                                    <span class="text-{{ color }}">{{ job.company }}</span>
+                                                    <span class="text-muted opacity-50 fw-normal fs-6">|</span>
+                                                    {{ job.position }}
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body p-4">
+                                                <div class="row g-4">
+                                                    <div class="col-md-6">
+                                                        <div class="detail-box p-3 h-100">
+                                                            <h6 class="text-uppercase tracking-wider text-muted-custom fs-7 mb-3">
+                                                                <i class="fa-solid fa-clipboard-list me-2"></i>Application Details
+                                                            </h6>
+                                                            <ul class="list-unstyled mb-0 d-flex flex-column gap-3">
+                                                                <li class="d-flex flex-column">
+                                                                    <span class="text-muted fs-7">Company</span>
+                                                                    <span class="fw-medium text-light">{{ job.company }}</span>
+                                                                </li>
+                                                                <li class="d-flex flex-column">
+                                                                    <span class="text-muted fs-7">Position</span>
+                                                                    <span class="fw-medium text-light">{{ job.position }}</span>
+                                                                </li>
+                                                                <li class="d-flex flex-column">
+                                                                    <span class="text-muted fs-7">File Date</span>
+                                                                    <span class="fw-medium text-light">{{ job.applied_date }}</span>
+                                                                </li>
+                                                                <li class="d-flex flex-column">
+                                                                    <span class="text-muted fs-7">Status</span>
+                                                                    <span class="fw-medium text-{{ color }} text-capitalize">{{ job.status|replace('_', ' ') }}</span>
+                                                                </li>
+                                                                <li class="d-flex flex-column">
+                                                                    <span class="text-muted fs-7">Filename</span>
+                                                                    <span class="fw-medium text-info font-monospace fs-7">{{ job.filename }}</span>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="detail-box p-3 h-100">
+                                                            <h6 class="text-uppercase tracking-wider text-muted-custom fs-7 mb-3">
+                                                                <i class="fa-solid fa-note-sticky me-2"></i>Field Notes
+                                                            </h6>
+                                                            {% if job.notes %}
+                                                            <p class="text-light-50 font-monospace fs-7">{{ job.notes }}</p>
+                                                            {% else %}
+                                                            <p class="text-muted fst-italic">No notes recorded.</p>
+                                                            {% endif %}
+                                                            {% if job.contact_email %}
+                                                            <div class="mt-3">
+                                                                <span class="text-muted fs-7 d-block">Contact</span>
+                                                                <span class="text-info">{{ job.contact_email }}</span>
+                                                            </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="px-4 pb-4 pt-2">
+                        <div class="label-empty-state border-{{ color }} border-opacity-15">
+                            <i class="fa-solid fa-folder-open text-{{ color }} opacity-50 fa-2x mb-2"></i>
+                            <span class="text-muted-custom">
+                                No files prefixed <code class="text-{{ color }}">{{ key }}_</code> found in your Job hunt folder.
+                            </span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endmacro %}
+
+    {{ label_panel('Rejected',  'ban',      'danger', 'rejectedPanel') }}
+    {{ label_panel('Interview', 'comments', 'teal',   'interviewPanel') }}
+
+</div>
+{% endif %}
+{% endblock %}
