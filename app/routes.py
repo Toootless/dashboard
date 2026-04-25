@@ -5,6 +5,7 @@ from app.job_scanner import JobScanner
 from app.gmail_service import GmailService
 from app.utils import match_emails_to_jobs
 from app.interview_prep import build_interview_prep
+from app.report_generator import generate_report
 
 main_bp = Blueprint('main', __name__)
 
@@ -154,3 +155,51 @@ def api_interview_prep():
         return jsonify({'success': True, 'prep': prep})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@main_bp.route('/api/report')
+def api_report():
+    """
+    Generate a report for applications and replies within a date range.
+    
+    Query parameters:
+      ?start_date=2024-01-01&end_date=2024-12-31
+    """
+    start_date = request.args.get('start_date', '').strip()
+    end_date = request.args.get('end_date', '').strip()
+    
+    try:
+        job_scanner, gmail_service = get_services()
+        jobs = job_scanner.scan_jobs()
+        emails = gmail_service.get_job_emails()
+        matched_data = match_emails_to_jobs(jobs, emails)
+        
+        report = generate_report(matched_data, emails, start_date, end_date)
+        return jsonify({'success': True, 'report': report})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@main_bp.route('/report')
+def report():
+    """
+    Render the report generator page with date range selector
+    """
+    start_date = request.args.get('start_date', '').strip()
+    end_date = request.args.get('end_date', '').strip()
+    
+    report_data = None
+    
+    try:
+        if start_date and end_date:
+            job_scanner, gmail_service = get_services()
+            jobs = job_scanner.scan_jobs()
+            emails = gmail_service.get_job_emails()
+            matched_data = match_emails_to_jobs(jobs, emails)
+            
+            report_data = generate_report(matched_data, emails, start_date, end_date)
+    except Exception as e:
+        print(f"Error generating report: {e}")
+        report_data = None
+    
+    return render_template('report.html', report=report_data)

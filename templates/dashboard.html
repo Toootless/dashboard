@@ -3,6 +3,19 @@
 {% block title %}Dashboard - Target.Acquired{% endblock %}
 
 {% block content %}
+{# ===== DASHBOARD HEADER WITH REPORT BUTTON ===== #}
+<div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h3 mb-0">Job Hunt Dashboard</h1>
+            <p class="text-muted small mt-1">Real-time tracking of your job applications</p>
+        </div>
+        <a href="/report" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-file-alt me-2"></i>Generate Report
+        </a>
+    </div>
+</div>
+
 {# ===== STAT CARDS ROW ===== #}
 <div class="row g-4 mb-5 fade-in-up" style="animation-delay: 0.1s;">
     <!-- Total Deployed -->

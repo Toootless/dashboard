@@ -21,13 +21,22 @@ A Flask web application for tracking job applications and monitoring email repli
 - Responsive Bootstrap 5 design
 - Refresh button for manual data sync
 
+✅ **Report Generator** (NEW)
+- Generate date-range reports for job applications
+- Stable AJAX form submission (no page reloads)
+- View statistics by application status (Applied, Interview, Rejected, Rejected after Interview)
+- Reply rate calculations and pending counts
+- Company career page links (25+ major companies)
+- Export-ready data for further analysis
+
 ## Status
 
-✅ **Setup Complete**
+✅ **PRODUCTION READY** - All features implemented and tested
 - Flask application running at `http://localhost:5000`
 - Job folder scanning working
 - Gmail API credentials configured
-- OAuth authentication set up
+- Report generator fully functional with stable AJAX submission
+- Career page links for major tech companies
 
 ## Running the Application
 
@@ -37,6 +46,24 @@ python main.py
 ```
 
 Visit: **http://localhost:5000**
+
+## Dashboard Features
+
+### Main Dashboard
+- **6 Metric Cards:** Total Deployed, Signals Returned, Awaiting Intel, Total Comms, Rejected, Interviews
+- **Active Targets Table:** Full list of 130+ job applications with company, role, date, and status
+- **Generate Report Button:** Quick access to date-range report generator
+
+### Report Generator
+- **Date Range Selector:** Choose start and end dates for your report
+- **AJAX Form:** Smooth report generation without page refresh
+- **Statistics by Status:**
+  - Applied (with replied/pending breakdown)
+  - Interview (with replied/pending breakdown)
+  - Rejected (with replied/pending breakdown)
+  - Rejected after Interview (with replied/pending breakdown)
+- **Company Career Links:** Direct links to company career pages
+- **Reply Rate:** Calculated percentage of applications with responses
 
 ## Setup Instructions (Already Completed)
 
@@ -132,6 +159,7 @@ Email: recruiter@company.com
 │   ├── routes.py            # Dashboard routes
 │   ├── job_scanner.py       # Job file scanner
 │   ├── gmail_service.py     # Gmail API integration
+│   ├── report_generator.py  # Report generation logic
 │   ├── models.py            # Data models
 │   └── utils.py             # Utility functions
 ├── static/
@@ -139,7 +167,8 @@ Email: recruiter@company.com
 │   └── js/dashboard.js      # Client-side scripts
 ├── templates/
 │   ├── base.html            # Base template
-│   └── dashboard.html       # Dashboard template
+│   ├── dashboard.html       # Dashboard template
+│   └── report.html          # Report generator template
 ├── config.py                # Configuration
 ├── main.py                  # Entry point
 ├── requirements.txt         # Dependencies
@@ -153,6 +182,34 @@ Edit `config.py` to customize:
 - `JOBS_FOLDER`: Path to your job files (default: `C:\Users\johnj\OneDrive\Documents\Job hunt`)
 - `GMAIL_FOLDER`: Gmail label name (default: `JobHunt`)
 - `DEBUG`: Debug mode (false for production)
+
+## Report Generator
+
+The report generator allows you to analyze job applications over custom date ranges.
+
+### Features
+- **Date Range Selection**: Pick start and end dates for your report
+- **AJAX Form Submission**: Generate reports without page reloads
+- **Status Breakdown**: See applications grouped by status (Applied, Interview, Rejected, Rejected_Interview)
+- **Reply Statistics**: View replied vs pending counts for each status
+- **Reply Rate**: Calculate percentage of applications with responses
+- **Company Career Links**: Direct links to 25+ major company career pages
+
+### Supported Companies for Career Links
+- Tech: Apple, Google, Microsoft, Amazon, Intel, NVIDIA, Qualcomm, Texas Instruments
+- Automotive: GM, Ford, Tesla, Rivian, HLMando, Magna, Slate, LUX
+- Defense/Aerospace: Boeing, Lockheed Martin, Raytheon
+- Electronics: ON Semiconductor, NXP, STMicroelectronics, Analog Devices, Microchip
+
+### Report Data Format
+Reports include:
+- Date range of report
+- Total applications in period
+- Total replies received
+- Pending applications
+- Overall reply rate %
+- Detailed breakdown by status with replied/pending counts
+- Full job listings with company, position, status, date, and reply status
 
 ## Troubleshooting
 
@@ -178,12 +235,19 @@ Edit `config.py` to customize:
   app.run(port=5001)
   ```
 
+**Report not generating:**
+- Ensure both start and end dates are selected
+- Check that jobs exist within the selected date range
+- Verify job files have valid `applied_date` field in ISO 8601 format (YYYY-MM-DD)
+
 ## API Endpoints
 
 - `GET /` - Main dashboard page
 - `GET /api/jobs` - JSON list of all jobs
 - `GET /api/stats` - Statistics summary
 - `GET /api/refresh` - Manually refresh data
+- `GET /report` - Report generator page
+- `GET /api/report?start_date=YYYY-MM-DD&end_date=YYYY-MM-DD` - Generate report (JSON)
 
 ## Dependencies
 
