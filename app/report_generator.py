@@ -40,8 +40,11 @@ def parse_job_status(filename):
     Parse the status from a job filename or folder name.
     
     Convention:
+        __Rejected_Interview_CompanyName_JobName_JobNumber → rejected_interview
         Rejected_Interview_CompanyName_JobName_JobNumber → rejected_interview
+        __Interview_CompanyName_JobName_JobNumber         → interview
         Interview_CompanyName_JobName_JobNumber          → interview
+        __Rejected_CompanyName_JobName_JobNumber         → rejected
         Rejected_CompanyName_JobName_JobNumber           → rejected
         CompanyName_JobName_JobNumber                     → applied
     
@@ -51,6 +54,9 @@ def parse_job_status(filename):
     Returns:
         (status, remainder) where remainder is the name with prefix removed
     """
+    # Strip leading underscores, dashes, and dots first
+    cleaned = filename.lstrip('_-.')
+    
     status_prefixes = [
         ('Rejected_Interview_', 'rejected_interview'),
         ('Rejected_',           'rejected'),
@@ -58,10 +64,10 @@ def parse_job_status(filename):
     ]
     
     for prefix, status in status_prefixes:
-        if filename.lower().startswith(prefix.lower()):
-            return status, filename[len(prefix):]
+        if cleaned.lower().startswith(prefix.lower()):
+            return status, cleaned[len(prefix):]
     
-    return 'applied', filename
+    return 'applied', cleaned
 
 
 def get_career_url(company_name):
