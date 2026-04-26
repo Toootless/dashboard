@@ -144,11 +144,15 @@ class JobScanner:
         Given a filename stem (no extension, no path), return
         (status, remainder) where remainder is the stem with the
         status prefix stripped.
+        Handles leading underscores: __Interview_Company_... -> interview
         """
+        # Strip leading underscores, dashes, and dots first
+        cleaned = stem.lstrip('_-.')
+        
         for prefix, status in self._STATUS_PREFIXES:
-            if stem.lower().startswith(prefix.lower()):
-                return status, stem[len(prefix):]
-        return 'applied', stem
+            if cleaned.lower().startswith(prefix.lower()):
+                return status, cleaned[len(prefix):]
+        return 'applied', cleaned
 
     def _parse_job_file(self, filepath, filename):
         """Parse a single job file"""

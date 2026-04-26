@@ -19,6 +19,29 @@ def get_services():
     return current_app.job_scanner, current_app.gmail_service
 
 
+def sort_jobs_by_status_priority(jobs):
+    """
+    Sort jobs with status priority: Interview first, then Applied, then Rejected.
+    Maintains chronological order (newest first) within each status group.
+    """
+    status_priority = {
+        'interview': 0,
+        'applied': 1,
+        'rejected': 2,
+        'rejected_interview': 3,
+    }
+    
+    def sort_key(job):
+        status = job.get('status', 'applied')
+        priority = status_priority.get(status, 99)
+        # Sort by priority first, then by date (newer first)
+        applied_date = job.get('applied_date', '')
+        return (priority, -ord(applied_date[0]) if applied_date else 0)
+    
+    return sorted(jobs, key=sort_key)
+
+
+
 def _build_label_data(jobs):
     """
     Build the label_data dict from already-scanned job records.
@@ -48,9 +71,6 @@ def dashboard():
     # Scan the Job hunt folder — status is derived from filename prefixes
     jobs = job_scanner.scan_jobs()
 
-    # Group into label-based sections (file-name driven, no Gmail call)
-    label_data = _build_label_data(jobs)
-
     # Fetch emails from Gmail for comms-check matching
     try:
         emails = gmail_service.get_job_emails()
@@ -60,8 +80,11 @@ def dashboard():
 
     # Match emails to jobs for the "Comms Check" column
     matched_data = match_emails_to_jobs(jobs, emails)
+    
+    # Sort by status priority: Interview → Applied → Rejected
+    matched_data = sort_jobs_by_status_priority(matched_data)
 
-    # Rebuild label_data on matched_data so status badges stay consistent
+    # Group into label-based sections (file-name driven, no Gmail call)
     label_data = _build_label_data(matched_data)
 
     stats = {
@@ -91,6 +114,8 @@ def api_jobs():
     except Exception:
         emails = []
     matched_data = match_emails_to_jobs(jobs, emails)
+    # Sort by status priority: Interview → Applied → Rejected
+    matched_data = sort_jobs_by_status_priority(matched_data)
     return jsonify({'success': True, 'jobs': matched_data, 'count': len(matched_data)})
 
 

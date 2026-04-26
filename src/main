@@ -1,0 +1,8 @@
+import subprocess
+
+try:
+    # Run the dashboard command in a new terminal window
+    subprocess.run(['C:\\Path\\To\\Dashboard.exe'], check=True, shell=True)
+    
+except subprocess.CalledProcessError as e:
+    print(f"Failed to run dashboard: {e}")
