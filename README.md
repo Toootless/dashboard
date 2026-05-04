@@ -40,6 +40,17 @@ A Flask web application for tracking job applications and monitoring email repli
 
 ## Running the Application
 
+### Option 1: Using Batch File (Easiest)
+Simply **double-click** the batch file in the dashboard folder:
+```
+start_dashboard.bat
+```
+This automatically:
+- Activates the virtual environment
+- Starts the Flask server
+- Opens on `http://localhost:5000`
+
+### Option 2: Command Line
 ```bash
 cd C:\Users\johnj\OneDrive\Documents\VS_projects\dashboard
 python main.py
@@ -239,6 +250,18 @@ Reports include:
 - Ensure both start and end dates are selected
 - Check that jobs exist within the selected date range
 - Verify job files have valid `applied_date` field in ISO 8601 format (YYYY-MM-DD)
+
+## Quick Start Batch File
+
+A convenient batch file is included to start the dashboard without any setup:
+
+**`start_dashboard.bat`**
+- Double-click to run
+- Automatically activates virtual environment
+- Starts Flask server
+- Opens dashboard on `http://localhost:5000`
+
+For faster access, create a shortcut to this file and place it on your desktop.
 
 ## API Endpoints
 
